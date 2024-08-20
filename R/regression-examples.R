@@ -1,5 +1,7 @@
 library(tidyverse)
 library(gtsummary)
+install.packages("broom.helpers")
+library(broom.helpers)
 
 nlsy_cols <- c("glasses", "eyesight", "sleep_wkdy", "sleep_wknd",
 							 "id", "nsibs", "samp", "race_eth", "sex", "region",
@@ -95,3 +97,47 @@ tbl_int <- tbl_regression(
 
 tbl_merge(list(tbl_no_int, tbl_int),
 					tab_spanner = c("**Model 1**", "**Model 2**"))
+
+
+# Exercise
+
+#Poisson (look at later)
+tbl_uvregression(
+	nlsy,
+	y = nsibs,
+	include = c(sleep_wknd, sleep_wkdy, region),
+	method = glm,
+	mehod.args = list(family = poisson()),
+	exponentiate = TRUE)
+
+# Multivariate regression + table
+
+logistic_model2 <- glm(glasses ~ eyesight_cat + sex_cat ,
+											data = nlsy, family = binomial(link = "log"))
+
+tbl_regression(
+	logistic_model2,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
+	))
+
+# Poisson regression multi
+
+logistic_model3 <- glm(glasses ~ eyesight_cat + sex_cat ,
+											 data = nlsy, family = poisson())
+
+tbl_regression(
+	logistic_model3,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
+	))
+
+#comparing both models
+
+eyes_poisson_table <- tbl_regression(logistic_model3,
+											 exponentiate = TRUE,
+											 tidy_fun = partial(tidy_robust, vcov = "HC1"))
