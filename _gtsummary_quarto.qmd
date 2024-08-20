@@ -34,6 +34,8 @@ tbl_summary(
 ```
 
 ```{r}
+#| label: tbl-one
+#| tbl-cap: Demogrpahics
 tbl_summary(
   nlsy,
   by = sex_cat,
@@ -48,6 +50,7 @@ tbl_summary(
   ),
   missing_text = "Missing")
 ```
+@tbl-one contains a table of patient demographics and their eyesight
 
 ## **New Chunk**
 
@@ -58,3 +61,58 @@ tbl_summary(
   include = c(sex_cat, race_eth_cat, region_cat,
               eyesight_cat, glasses, age_bir))
 ```
+
+Mean Chunk
+```{r}
+ stats <- list(n = nrow(nlsy), mean_sleep = mean(nlsy$sleep_wknd, na.rm = TRUE))
+
+	
+```
+
+There are `r stats$n` participants with an average amount of sleep of `r stats$mean_sleep`  on the weekend
+
+Median Chunk
+```{r}
+stats2 <- list(n = nrow(nlsy), median_sleep = median(nlsy$sleep_wknd, na.rm = TRUE))
+```
+
+There are `r stats2$n` participants and the median hours of sleep on the weekend was `r stats2$median_sleep`
+
+
+Exercise 2 Chunk
+```{r}
+#| label: tbl-descr
+#| tbl-cap: "Descriptive statistics"
+#| output-location: slide
+#| echo: false
+table1 <- tbl_summary(
+  nlsy,
+  by = sex_cat,
+  include = c(sex_cat, race_eth_cat, region_cat,
+              eyesight_cat, glasses, age_bir)) |> 
+  add_overall(last = TRUE)
+table1
+
+inline_text(table1, variable = "age_bir", column = "stat_1")
+```
+The median (IQR) age of the male participants at the birth of their first child was `r inline_text(table1, variable = "age_bir", column = "stat_1") `
+
+Exercise 2 Sleep Chunk
+
+```{r}
+#| label: tbl-descr
+#| tbl-cap: "Descriptive statistics"
+#| output-location: slide
+#| echo: false
+table2 <- tbl_summary(
+  nlsy,
+  by = sex_cat,
+  include = c(sex_cat, race_eth_cat, region_cat,
+              eyesight_cat, glasses, sleep_wknd)) |> 
+  add_overall(last = TRUE)
+table2
+
+inline_text(table2, variable = "sleep_wknd", column = "stat_0")
+```
+
+The median and IRQ are `r inline_text(table2, variable = "sleep_wknd", column = "stat_0")`
